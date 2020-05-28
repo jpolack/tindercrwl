@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node auth.js",
+    "start": "node .",
     "run": "node run.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,8 +17,10 @@
     "eslint-plugin-import": "^2.20.2"
   },
   "dependencies": {
+    "delay": "^4.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-basic-auth": "^1.2.0",
     "moment": "^2.26.0",
     "mongodb": "^3.5.7",
     "node-fetch": "^2.6.0"

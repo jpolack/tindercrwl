@@ -1,9 +1,4 @@
-const fs = require('fs');
-const express = require('express');
 const fetch = require('node-fetch');
-const { crawl } = require('./crawl');
-
-require('dotenv').config();
 
 const reAuthenticate = async (twoFaCode) => {
   const refreshRes = await fetch(
@@ -44,38 +39,6 @@ const reAuthenticate = async (twoFaCode) => {
   return auth.data.api_token;
 };
 
-
-const apiKey = process.env.API_KEY;
-fs.writeFileSync('./token.txt', apiKey);
-
-const app = express();
-
-
-app.get('/run', async (_, res) => {
-  try {
-    await crawl();
-  } catch (e) {
-    console.error('ERROR', e);
-    res.sendStatus(500);
-    return;
-  }
-
-  res.send('OK');
-});
-
-app.get('/code/:code', async (req, res) => {
-  try {
-    const token = await reAuthenticate(req.params.code);
-    if (!token) {
-      res.sendStatus(204);
-      return;
-    }
-    res.send(token);
-    fs.writeFileSync('./token.txt', token);
-  } catch (e) {
-    console.error('ERROR', e);
-    res.sendStatus(500);
-  }
-});
-
-app.listen(process.env.PORT || 9000);
+module.exports = {
+  reAuthenticate,
+};
