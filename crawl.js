@@ -113,8 +113,16 @@ const likeAllRecs = async () => {
         'User-Agent': 'Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)',
       },
     });
+
     if (res.status !== 200) {
       log('ERROR', res.status, await res.text());
+      return false;
+    }
+
+    const answer = await res.json();
+
+    if (answer.likes_remaining === 0) {
+      log('No likes remaining');
       return false;
     }
   }
@@ -130,7 +138,6 @@ const likeTilError = async (count) => {
   log('Remainig iterations', count);
   const success = await likeAllRecs();
   if (!success) {
-    log('Breaking because of error');
     return;
   }
   await likeTilError(count - 1);
