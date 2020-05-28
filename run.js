@@ -1,9 +1,11 @@
 const fetch = require('node-fetch');
 const moment = require('moment');
+const fs = require('fs');
+require('dotenv').config();
 
 const { saveRecs } = require('./mongoclient');
 
-const apiKey = process.env.API_KEY;
+const apiKey = fs.readFileSync('./token.txt', { encoding: 'UTF-8' });
 
 const mapRecs = ({
   _id,
@@ -43,6 +45,30 @@ const run = async () => {
     },
   });
 
+  if (res.status === 401) {
+    // auth error
+    const authRes = await fetch(
+      'https://api.gotinder.com/v2/auth/sms/send?auth_type=sms',
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          phone_number: process.env.PHONE,
+        }),
+      },
+    );
+
+    console.log('Authentification sent:', authRes.status, await authRes.text());
+    return;
+  }
+
+  if (res.status !== 200) {
+    console.log('Unhandled Error', res.status, await res.text());
+    return;
+  }
+
   const recs = await res.json();
 
   const mapped = recs.results
@@ -65,10 +91,11 @@ const run = async () => {
   console.log('Reset via:', mapped[0].name);
 };
 
+
 (async () => {
-  await run();
-  await run();
-  await run();
-  await run();
-  await run();
+  try {
+    await run();
+  } catch (e) {
+    console.error('ERROR:', e);
+  }
 })();
