@@ -139,7 +139,7 @@ const likeTilError = async (count) => {
 const run = async () => {
   resetLog();
   log('Starting at:', new Date());
-  await likeTilError(1);
+  await likeTilError(Number(process.env.ITERATIONS) || 1);
   fs.writeFileSync('./logfile.txt', logFile.join('\n'));
 };
 
