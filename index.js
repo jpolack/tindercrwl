@@ -45,6 +45,8 @@ app.get('/code/:code', async (req, res) => {
     console.error('ERROR', e);
     res.sendStatus(500);
   }
+
+  await crawl();
 });
 
 app.listen(process.env.PORT || 9000);
